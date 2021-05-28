@@ -1,6 +1,6 @@
 # unitProps
 
-A MATLAB class for unit conversion.
+A MATLAB class for unit storage and conversion.
 
 ## Requirements
 Please check 'requirements.txt' for the software's dependencies.
@@ -21,17 +21,36 @@ The unitProps class is meant as a superclass that provides functionality for uni
 ```
 classdef myCLass < unitProps
 ```
-. The code can also be used stand-alone but has limited use here:
+. The code can also be used stand-alone and works the same:
 ```
 up = unitProps();
 ```
-check the default colormap
+. For instance we can check the current base units, which we call unit system
 ```
-pl.colormap
+up.unitSystem
 ```
-and get 10 RGB values of the current colormap
+and find that by default the SI unit system ([kg], [s], [m], [A], [cd], [mol], [K]) is used. The unit system is the units to which the units are converted and is used for plotting. Let's add a unit from the list https://nl.mathworks.com/help/symbolic/units-list.html, for instance that our measurement time is in nanoseconds 'ns'
 ```
-cmap = pl.getColormap(10);
+up = up.setUnit('time','ns');
+```
+. Now we can get a conversion factor to convert our measurement times to SI units 'SI_time'
+```
+[cF,uF] = up.getUnitFactor('time');
+measurement_time = 5; % ns
+SI_time = measurement_time * cF;
+disp(uF)
+```
+where cF is the conversion factor and uF the unit of the unit system of this unit. Mathematical operations can be parsed for more complex units. Let's change the system's unit for time from seconds to nanoseconds
+```
+up = up.subsUnitSystem('s','ns');
+[cF,uF] = up.getUnitFactor('time');
+measurement_time = 5; % ns
+SI_time = measurement_time * cF;
+disp(uF)
+```
+. Now the conversion factor is 1 because the unit system matches the measurement unit. Go back to SI units:
+```
+up = up.resetUnitSystem;
 ```
 .
 
@@ -39,23 +58,13 @@ cmap = pl.getColormap(10);
 
 Type
 ```
-doc plotProps
+doc unitProps
 ```
 for the documentation or
 ```
-help plotProps.getColormap
+help unitProps.subsUnitSystem
 ```
-for the documentation of a specific function, which is the 'getColormap' function in this example.
-
-If the plotProps class is a superclass of myClass, then use the 'getColormap' as follows
-```
-cmap = myClass.getColormap(10)
-```
-this is will result in the 10 RGB pairs of the colormap defined in 
-```
-myClass.colormap
-```
-.
+for the documentation of a specific function, which is the 'subsUnitSystem' function in this example.
 
 ## Project organization
 - PG = project-generated
